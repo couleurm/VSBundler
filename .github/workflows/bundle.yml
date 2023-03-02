@@ -26,6 +26,5 @@ jobs:
           tag: ${{ github.ref }}
           artifacts: "smShip/*.7z"
           token: ${{ secrets.GITHUB_TOKEN }}
-          allowUpdates: true
           body: |
               Changes: https://github.com/herotc/hero-rotation/compare/${{ env.oldtag }}...${{ env.tag }}

@@ -19,7 +19,7 @@ jobs:
         shell: pwsh
         run: |
           $env:COMMIT_SHA = [String]($env:GITHUB_WORKFLOW_SHA[0..6] -join '')
-          ni ./smShip/dummy.7z;exit 0; ./smCi.ps1 -Strip -UPX  -GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }}
+          mkdir ./smShip;ni ./smShip/dummy.7z;exit 0; ./smCi.ps1 -Strip -UPX  -GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }}
 
       - name: Bump version and push tag
         id: tag_version

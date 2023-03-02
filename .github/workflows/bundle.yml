@@ -11,7 +11,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
-      - name: /CTT CI
+      - name: VapourSynth Bundler
         shell: pwsh
         # Install-Module -Name powershell-yaml
         run: ./smCi.ps1 -Strip -UPX

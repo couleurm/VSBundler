@@ -1,10 +1,7 @@
 name: build
 
 on:
-  pull_request:
   push:
-    branches:
-      - main
     tags:
       - "*"
 
@@ -21,12 +18,10 @@ jobs:
           $env:COMMIT_SHA = [String]($env:GITHUB_WORKFLOW_SHA[0..6] -join '')
           ni ./smShip.dummy.7z;exit 0; ./smCi.ps1 -Strip -UPX  -GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: ncipollo/release-action@v1
+      - uses: softprops/action-gh-release@v1
         # if: startsWith(github.ref, 'refs/tags/')
         with:
           name: Nightly bundling
-          artifacts: "smShip/*.7z"
-          tag: ${{ env.COMMIT_SHA }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          body: |
-              Changes: https://github.com/herotc/hero-rotation/compare/${{ env.oldtag }}...${{ env.tag }}
+          files: |
+            "smShip/VapourSynth.7z"
+            "smShip/VapourSynth-Stripped.7z"

@@ -8,11 +8,11 @@ param(
 )
 
 iex(irm tl.ctt.cx);
-"dark", "upx", "lessmsi"
-if (-not(get-path $_)){
-    get main/$_
+"dark", "upx", "lessmsi" | ForEach-Object {
+    if (-not(get-path $_)){
+        get "main/$_"
+    }
 }
-
 
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot

@@ -18,8 +18,9 @@ jobs:
       - name: VapourSynth Bundler
         shell: pwsh
         run: |
-          $env:COMMIT_SHA = [String]($env:GITHUB_WORKFLOW_SHA[0..6] -join '')
-          mkdir ./smShip;ni ./smShip/VapourSynth.7z;exit 0; ./smCi.ps1 -Strip -UPX  -GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }}
+          ./smCi.ps1 -Strip -UPX  -GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }}
+        #$env:COMMIT_SHA = [String]($env:GITHUB_WORKFLOW_SHA[0..6] -join '')
+        #mkdir ./smShip;ni ./smShip/VapourSynth.7z;exit 0; 
     
       - name: Generate release tag
         id: tag
@@ -32,6 +33,4 @@ jobs:
           fail_on_unmatched_files: true
           files: |
             ./smShip/VapourSynth.7z
-          
-          
-          #smShip/VapourSynth-Stripped.7z
+            ./smShip/VapourSynth-Stripped.7z

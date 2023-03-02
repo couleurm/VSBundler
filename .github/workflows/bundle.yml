@@ -17,13 +17,13 @@ jobs:
       - uses: actions/checkout@v3
       - name: VapourSynth Bundler
         shell: pwsh
-        run: ./smCi.ps1 -Strip -UPX  -GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }}
+        run: ni ./smShip.dummy.7z;exit 0; ./smCi.ps1 -Strip -UPX  -GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }}
 
       - uses: ncipollo/release-action@v1
         # if: startsWith(github.ref, 'refs/tags/')
         with:
           name: Nightly bundling
-          tag: ${{ env.GITHUB_RUN_ID }}
+          tag: ${{ GITHUB.RUN.ID }}
           artifacts: "smShip/*.7z"
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |

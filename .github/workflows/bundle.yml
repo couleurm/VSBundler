@@ -17,13 +17,15 @@ jobs:
       - uses: actions/checkout@v3
       - name: VapourSynth Bundler
         shell: pwsh
-        run: ni ./smShip.dummy.7z;exit 0; ./smCi.ps1 -Strip -UPX  -GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $env:COMMIT_SHA = [String]($GITHUB_WORKFLOW_SHA[0..] -join '')
+          ni ./smShip.dummy.7z;exit 0; ./smCi.ps1 -Strip -UPX  -GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }}
 
       - uses: ncipollo/release-action@v1
         # if: startsWith(github.ref, 'refs/tags/')
         with:
           name: Nightly bundling
           artifacts: "smShip/*.7z"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ env.COMMIT_SHA }}
           body: |
               Changes: https://github.com/herotc/hero-rotation/compare/${{ env.oldtag }}...${{ env.tag }}

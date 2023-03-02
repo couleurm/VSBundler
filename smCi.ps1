@@ -65,7 +65,7 @@ function SetupEnvironment {
             #     curl -L $params.Uri -o $params.Outfile
             # }
             # Wait-Debugger
-            curl --verbose -L $table.Uri -o $table.Outfile
+            curl -L $table.Uri -o $table.Outfile
             if (-not(Test-Path $table.Outfile)){
                 Write-Debug "$File failed with table $($table | ConvertTo-Json -Depth 2 -Compress)" -Debug
                 # Wait-Debugger

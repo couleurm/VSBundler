@@ -1,0 +1,21 @@
+name: build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: /CTT CI
+        shell: pwsh
+        # Install-Module -Name powershell-yaml
+        run: ./smCi.ps1 -Strip -UPX
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "./smBuild/*.7z"

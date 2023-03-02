@@ -24,6 +24,7 @@ jobs:
       - uses: softprops/action-gh-release@v1
         # if: startsWith(github.ref, 'refs/tags/')
         with:
+          tag: ${{ env.COMMIT_SHA }}
           name: Nightly bundling
           files: |
             "smShip/VapourSynth.7z"

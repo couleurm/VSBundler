@@ -86,16 +86,15 @@ function Get-Release{
         $Repo, # Username or organization/Repository
         $Pattern # Wildcard pattern
     )
-    $auth = if ($GITHUB_TOKEN){
-        "Bearer $GITHUB_TOKEN"
-    } else {
-        ""
-    }
     Write-Host "Getting $Pattern from $Repo"
     $Parameters = @{
         Authentication = $auth
         Uri = "https://api.github.com/repos/$Repo/releases/latest"
         ErrorAction = 'Stop'
+    }
+    if ($GITHUB_TOKEN){
+        $Parameters.Authentication = "Bearer"
+        $Parameters.Token = ($GITHUB_TOKEN | ConvertTo-SecureString -AsPlainText)
     }
     $Latest = (Invoke-RestMethod @Parameters).assets.browser_download_url | Where-Object {$_ -Like "*$Pattern"}
 

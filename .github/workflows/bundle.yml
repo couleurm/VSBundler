@@ -20,7 +20,7 @@ jobs:
         run: ./smCi.ps1 -GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }} #-Strip -UPX 
 
       - uses: ncipollo/release-action@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        # if: startsWith(github.ref, 'refs/tags/')
         with:
           artifacts: "smBuild/smShip/*.7z"
           token: ${{ secrets.GITHUB_TOKEN }}

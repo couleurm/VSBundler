@@ -64,6 +64,10 @@ function SetupEnvironment {
                 
                 Invoke-WebRequest @params -Verbose
             }
+            if (-not(Test-Path $Parameters.Outfile)){
+                Write-Debug "$File failed" -Debug
+                throw "Failed getting latest release from API"
+            }
         }
     }
     

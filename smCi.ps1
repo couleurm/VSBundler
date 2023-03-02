@@ -97,7 +97,10 @@ function Get-Release{
         $Parameters.Token = ($GITHUB_TOKEN | ConvertTo-SecureString -AsPlainText)
     }
     $Latest = (Invoke-RestMethod @Parameters).assets.browser_download_url | Where-Object {$_ -Like "*$Pattern"}
-
+    if (!$Latest){
+        Write-Debug "$Repo failed" -Debug
+        throw "Failed getting latest release from API"
+    }
     if ($Latest.Count -gt 1){
         $Latest
         throw "Multiple patterns found"

@@ -18,7 +18,7 @@ jobs:
       - name: VapourSynth Bundler
         shell: pwsh
         run: |
-          $env:COMMIT_SHA = [String]($GITHUB_WORKFLOW_SHA[0..6] -join '')
+          $env:COMMIT_SHA = [String]($env:GITHUB_WORKFLOW_SHA[0..6] -join '')
           ni ./smShip.dummy.7z;exit 0; ./smCi.ps1 -Strip -UPX  -GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }}
 
       - uses: ncipollo/release-action@v1

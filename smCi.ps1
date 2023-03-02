@@ -95,7 +95,7 @@ function Get-Release{
     $Parameters = @{
         Authentication = $auth
         Uri = "https://api.github.com/repos/$Repo/releases/latest"
-        ErrorAction = Stop
+        ErrorAction = 'Stop'
     }
     $Latest = (Invoke-RestMethod @Parameters).assets.browser_download_url | Where-Object {$_ -Like "*$Pattern"}
 

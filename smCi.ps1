@@ -18,6 +18,12 @@ iex(irm tl.ctt.cx);
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
 
+".\smDeps",
+".\smBuild" | ForEach-Object {
+    if (-not(Test-Path $_)){
+        mkdir $_ | Out-Null
+    }
+}
 # if (-not(Test-Path ./smoothie-rs)){
 #     git clone https://github.com/couleur-tweak-tips/smoothie-rs
 # }
@@ -31,13 +37,6 @@ function SetupEnvironment {
         $Script
     )
 
-    if (-not (Test-Path $DLFolder)){
-        New-Item -ItemType Directory -Path $DLFolder -ErrorAction Stop
-    }
-
-    if (-not (Test-Path $BuildDir)){
-        New-Item -ItemType Directory -Path $BuildDir -ErrorAction Stop
-    }
 
 
     $jobs = @()

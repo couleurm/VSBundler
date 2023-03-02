@@ -21,11 +21,16 @@ jobs:
           $env:COMMIT_SHA = [String]($env:GITHUB_WORKFLOW_SHA[0..6] -join '')
           ni ./smShip.dummy.7z;exit 0; ./smCi.ps1 -Strip -UPX  -GITHUB_TOKEN ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: softprops/action-gh-release@v1
-        # if: startsWith(github.ref, 'refs/tags/')
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.0
         with:
-          tag: ${{ env.COMMIT_SHA }}
-          name: Nightly bundling
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.tag_version.outputs.new_tag }}
+          fail_on_unmatched_files: true
           files: |
             "smShip/VapourSynth.7z"
             "smShip/VapourSynth-Stripped.7z"

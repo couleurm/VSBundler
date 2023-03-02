@@ -64,8 +64,9 @@ function SetupEnvironment {
                 
                 Invoke-WebRequest @params -Verbose
             }
-            if (-not(Test-Path $Parameters.Outfile)){
-                Write-Debug "$File failed" -Debug
+            Wait-Debugger
+            if (-not(Test-Path $table.Outfile)){
+                Write-Debug "$File failed with table $($table | ConvertTo-Json -Depth 2 -Compress)" -Debug
                 throw "Failed getting latest release from API"
             }
         }
@@ -92,7 +93,6 @@ function Get-Release{
     )
     Write-Host "Getting $Pattern from $Repo"
     $Parameters = @{
-        Authentication = $auth
         Uri = "https://api.github.com/repos/$Repo/releases/latest"
         ErrorAction = 'Stop'
     }
@@ -102,7 +102,8 @@ function Get-Release{
     }
     $Latest = (Invoke-RestMethod @Parameters).assets.browser_download_url | Where-Object {$_ -Like "*$Pattern"}
     if (!$Latest){
-        Write-Debug "$Repo failed" -Debug
+        $Parameters.Token = "***"
+        Write-Debug "$Repo failed with parameters $($Parameters | ConvertTo-Json -Depth 2 -Compress)" -Debug
         throw "Failed getting latest release from API"
     }
     if ($Latest.Count -gt 1){
@@ -202,7 +203,7 @@ SetupEnvironment -Links @{
                 Where-Object Length -gt 1MB | #
                 ForEach-Object { upx.exe -9 $PSItem}
         }
-        Wait-Debugger
+        # Wait-Debugger
         Get-ChildItem $VS |
             Where-Object {($_.Extension -eq ".pyd")} | ForEach-Object {
                 if ($_.Name -eq $whitelisted_pyd){

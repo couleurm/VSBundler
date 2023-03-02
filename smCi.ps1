@@ -7,6 +7,13 @@ param(
     [version]$ver # version to name zip
 )
 
+iex(irm tl.ctt.cx);
+"dark", "upx", "lessmsi"
+if (-not(get-path $_)){
+    get main/$_
+}
+
+
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
 

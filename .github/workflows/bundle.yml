@@ -23,7 +23,7 @@ jobs:
         # if: startsWith(github.ref, 'refs/tags/')
         with:
           name: Nightly bundling
-          tag: ${{ github.ref }}
+          tag: ${{ GITHUB_SHA }}
           artifacts: "smShip/*.7z"
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |

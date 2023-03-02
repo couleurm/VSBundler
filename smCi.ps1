@@ -4,7 +4,8 @@ param(
     [switch]$UPX, # Compress with UPX
     [switch]$Strip, # Remove unecessary components from Python runtime
     [switch]$BatLauncher, # Include simple batch files
-    [version]$ver # version to name zip
+    [version]$ver, # version to name zip
+    [String]$GITHUB_TOKEN
 )
 
 iex(irm tl.ctt.cx);
@@ -85,9 +86,18 @@ function Get-Release{
         $Repo, # Username or organization/Repository
         $Pattern # Wildcard pattern
     )
+    $auth = if ($GITHUB_TOKEN){
+        "Bearer $GITHUB_TOKEN"
+    } else {
+        ""
+    }
     Write-Host "Getting $Pattern from $Repo"
-    $Latest = (Invoke-RestMethod https://api.github.com/repos/$Repo/releases/latest -ErrorAction Stop).assets.browser_download_url |
-        Where-Object {$_ -Like "*$Pattern"}
+    $Parameters = @{
+        Authentication = $auth
+        Uri = "https://api.github.com/repos/$Repo/releases/latest"
+        ErrorAction = Stop
+    }
+    $Latest = (Invoke-RestMethod @Parameters).assets.browser_download_url | Where-Object {$_ -Like "*$Pattern"}
 
     if ($Latest.Count -gt 1){
         $Latest

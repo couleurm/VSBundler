@@ -62,7 +62,8 @@ function SetupEnvironment {
             $jobs += Start-ThreadJob -Name $File -ScriptBlock {
                 $params = $using:table
                 
-                Invoke-WebRequest @params -Verbose
+                # Invoke-WebRequest @params -Verbose
+                curl -L $params.Uri -o$params.Outfile
             }
             Wait-Debugger
             if (-not(Test-Path $table.Outfile)){

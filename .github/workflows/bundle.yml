@@ -28,7 +28,7 @@ jobs:
 
       - uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ ${{ steps.tag.outputs.release_tag }} }}
+          tag_name: ${{ steps.tag.outputs.release_tag }}
           fail_on_unmatched_files: true
           files: |
             ./smShip/VapourSynth.7z

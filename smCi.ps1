@@ -26,8 +26,8 @@ Set-Location $PSScriptRoot
 function SetupEnvironment {
     param(
         [Array]$Links,
-        $DLFolder = ".\smDeps",
-        $BuildDir = ".\smBuild",
+        $DLFolder = (convert-path ".\smDeps"),
+        $BuildDir = (convert-path ".\smBuild"),
         $Script
     )
 
@@ -63,7 +63,7 @@ function SetupEnvironment {
                 $params = $using:table
                 
                 # Invoke-WebRequest @params -Verbose
-                curl -L $params.Uri -o$params.Outfile
+                curl -L $params.Uri -o $params.Outfile
             }
             Wait-Debugger
             if (-not(Test-Path $table.Outfile)){

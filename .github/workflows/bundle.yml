@@ -26,6 +26,7 @@ jobs:
         with:
           name: Nightly bundling
           artifacts: "smShip/*.7z"
-          token: ${{ env.COMMIT_SHA }}
+          tag: ${{ env.COMMIT_SHA }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           body: |
               Changes: https://github.com/herotc/hero-rotation/compare/${{ env.oldtag }}...${{ env.tag }}

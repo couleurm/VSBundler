@@ -3,7 +3,6 @@ param(
     [Switch]$Strip,
     [Switch]$UPX, # use -9 on files greater than 1MB
     [Switch]$UPXBrute, # use --best --ultra-brute on all compressible files
-
     [Switch]$DontZip, # skips zipping, for debugging
     [Switch]$EnsureVSScript # Executes vspipe.exe after each component is stripped/compressed and fails if $LASTEXITCODE
 )

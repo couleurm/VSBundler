@@ -1,8 +1,15 @@
 param(
     [String]$GITHUB_TOKEN,
     [Switch]$Strip,
-    [Switch]$UPX
+    [Switch]$UPX, # use -9 on files greater than 1MB
+    [Switch]$UPXBrute, # use --best --ultra-brute on all compressible files
+
+    [Switch]$DontZip, # skips zipping, for debugging
+    [Switch]$EnsureVSScript # Executes vspipe.exe after each component is stripped/compressed and fails if $LASTEXITCODE
 )
+if ($UPXBrute -and $UPX){
+    return "Can't pass both -UPXBrute and -UPX"
+}
 
 if (-not(Get-Command Get -ErrorAction Ignore)){
     Invoke-Expression (Invoke-RestMethod tl.ctt.cx);
@@ -13,7 +20,7 @@ if (-not(Get-Command Get -ErrorAction Ignore)){
         get "main/$_"
     }
 }
-$whitelisted_pyd = 'vapoursynth.cp38-win_amd64.pyd'
+$whitelisted_pyd = 'vapoursynth.cp310-win_amd64.pyd'
 $Dependencies = [Ordered]@{
     'py3109.exe' = 'https://www.python.org/ftp/python/3.10.9/python-3.10.9-amd64.exe'
     'getpip.py'  = 'https://bootstrap.pypa.io/get-pip.py'
@@ -170,50 +177,38 @@ Expand-Archive $vsA6 -DestinationPath $VS -Force
 Write-Warning "VS Plugins"
 
 Push-Location $VS/vapoursynth64/plugins
-7z e -y $svp -r svpflow1_vs.dll svpflow2_vs.dll . | Out-Null
+if (!$DontZip){
+    7z e -y $svp -r svpflow1_vs.dll svpflow2_vs.dll . | Out-Null
+}
 
 $akexpr, $lsmash, $mvtools, $rife, $remap | ForEach-Object { 7z x $_ }
 
 Pop-Location
 
-Write-Warning "Zipping"
 
-7z a ".\smShip\VapourSynth.7z" .\smBuild\VapourSynth\ -t7z -mx=8 -sae
+if (!$DontZip){
+    Write-Warning "Zipping non-stripped"
+    7z a ".\smShip\VapourSynth.7z" .\smBuild\VapourSynth\ -t7z -mx=8 -sae
+}
 
 if ($Strip){
+    Wait-Debugger
+    Remove-Item (Get-ChildItem $VS/*.pyd | Where-Object {$_.Name -ne $whitelisted_pyd}) -Verbose
 
-    if ($UPX){
-        Write-Warning "UPX Compression"
-        Get-ChildItem $VS/$py_dll_name, $VS/vapoursynth64/ -Recurse -Include *.dll |
-            Where-Object Length -gt 1MB | #
-            ForEach-Object { upx.exe -9 $PSItem}
-    }
-    # Wait-Debugger
-    Get-ChildItem $VS |
-        Where-Object {($PSItem.Extension -eq ".pyd")} | ForEach-Object {
-            if ($PSItem.Name -eq $whitelisted_pyd){
-                if ($UPX){
-                    upx -9 $PSItem
-                }
-            } else {
-                Remove-Item $PSItem -Verbose
-            }
-        }  
-    
 
     Write-Warning "Stripping"
     @(
+        "pythonw.exe"
         "AVFS.exe"
-        "VSFW.dll"
+        "VSVFW.dll"
         "vsrepo.py"
-        "sdk"
         "VapourSynth_portable.egg-info"
-        "vapoursynth.cp*.pyd"
+        "/sdk/"
 
-        "/DLL/sqlite3.dll" # databases?
-        "/DLL/libcrypto-1_1.dll" # making rest requests
+        "/DLLs/sqlite3.dll" # databases yeah i aint using that?
+        "/DLLs/libssl-1_1.dll"
+        "/DLLs/libcrypto-1_1.dll" # http stuff
 
-    
         "/NEWS.txt"
         "/doc/"
         "/Scripts/"
@@ -222,20 +217,48 @@ if ($Strip){
         "/Lib/site-packages/setuptools"
         "/Lib/site-packages/wheel"
         "/Lib/pydoc_data/"
+        "/Lib/sqlite3/"
         "/Lib/ensurepip/"
         "/Lib/unittest/"
         "/Lib/venv/"
-        "/Lib/2to3/"
+        "/Lib/lib2to3/"
+        # "/DLLs/libffi-7.dll"  # used by VSPipe internally
 
     ) | ForEach-Object {
         (Join-Path $VS $PSItem)
     } | ForEach-Object {
         if (Test-Path $PSItem){
+            
             Remove-Item $PSItem -Recurse -Force -Verbose
+            
+            if ($EnsureVSScript){
+                & $VS/vspipe.exe
+                if ($LASTEXITCODE){
+                    Write-Warning "Failed after $PSItem"
+                    exit 1
+                }
+            }
+
         } else {
             Write-Host "$PSItem did not exist"
         }
     }
 
-    7z a ".\smShip\VapourSynth-Stripped.7z" .\smBuild\VapourSynth\ -t7z -mx=8 -sae
+    $Binaries = Get-ChildItem $VS -Recurse -Include *.exe, *.dll, *.lib, *.pyd -Exclude VapourSynth.dll
+
+    if ($UPX){
+        
+        Write-Warning "Compressing with UPX"
+
+        upx -9 ($Binaries | Where-Object Length -gt 1MB)
+    }elseif($UPXBrute){
+        upx --best --ultra-brute $Binaries
+    }
+
+    if (!$DontZip){
+        Write-Warning "Zipping stripped"
+        7z a ".\smShip\VapourSynth-Stripped.7z" .\smBuild\VapourSynth\ -t7z -mx=8 -sae
+
+    }
+
 }

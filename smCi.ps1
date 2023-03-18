@@ -31,7 +31,8 @@ $Dependencies = [Ordered]@{
     'remap.zip'  = @{ Repo = "Irrational-Encoding-Wizardry/Vapoursynth-RemapFrames";    Pattern = "Vapoursynth-RemapFrames-v*-x64.zip"}
     'rife.7z'    = @{ Repo = "HomeOfVapourSynthEvolution/VapourSynth-RIFE-ncnn-Vulkan"; Pattern = "RIFE-r*-win64.7z"}
     'vsA6.zip'   = @{ Repo = "AmusementClub/vapoursynth-classic";                       Pattern = "release-x64.zip"}
-   #'vsfbd.dll' = @{Repo = "couleurm/vs-frameblender";                                  Pattern = "vs-frameblender-*.dll"}
+    'fmtconv.zip' = 'https://github.com/EleonoreMizo/fmtconv/releases/download/r30/fmtconv-r30.zip'
+    #'vsfbd.dll' = @{Repo = "couleurm/vs-frameblender";                                  Pattern = "vs-frameblender-*.dll"}
 }
 
 $ErrorActionPreference = 'Stop'
@@ -176,9 +177,9 @@ Expand-Archive $vsA6 -DestinationPath $VS -Force
 Write-Warning "VS Plugins"
 
 Push-Location $VS/vapoursynth64/plugins
-if (!$DontZip){
-    7z e -y $svp -r svpflow1_vs.dll svpflow2_vs.dll . | Out-Null
-}
+
+7z e -y $svp -r svpflow1_vs.dll svpflow2_vs.dll . | Out-Null
+7z e -y $fmtconv -r 'win64\fmtconv.dll' . | Out-Null
 
 $akexpr, $lsmash, $mvtools, $rife, $remap | ForEach-Object { 7z x $_ }
 

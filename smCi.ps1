@@ -19,6 +19,7 @@ if (-not(Get-Command Get -ErrorAction Ignore)){
         get "main/$_"
     }
 }
+$timecube_release = "r3.1"
 $whitelisted_pyd = 'vapoursynth.cp310-win_amd64.pyd'
 $Dependencies = [Ordered]@{
     'py3109.exe' = 'https://www.python.org/ftp/python/3.10.9/python-3.10.9-amd64.exe'
@@ -29,10 +30,12 @@ $Dependencies = [Ordered]@{
     'lsmash.zip' = "https://github.com/AkarinVS/L-SMASH-Works/releases/download/vA.3k/release-x86_64-cachedir-tmp.zip"
     'mvtools.7z' = @{ Repo = "dubhater/vapoursynth-mvtools";                            Pattern = "vapoursynth-mvtools-v*-win64.7z"}
     'remap.zip'  = @{ Repo = "Irrational-Encoding-Wizardry/Vapoursynth-RemapFrames";    Pattern = "Vapoursynth-RemapFrames-v*-x64.zip"}
-    'rife.7z'    = @{ Repo = "HomeOfVapourSynthEvolution/VapourSynth-RIFE-ncnn-Vulkan"; Pattern = "RIFE-r*-win64.7z"}
+    # 'rife.7z'    = @{ Repo = "HomeOfVapourSynthEvolution/VapourSynth-RIFE-ncnn-Vulkan"; Pattern = "RIFE-r*-win64.7z"}
+    'librife.dll'    = @{ Repo = "styler00dollar/VapourSynth-RIFE-ncnn-Vulkan"; Pattern = "librife.dll"}
     'vsA6.zip'   = @{ Repo = "AmusementClub/vapoursynth-classic";                       Pattern = "release-x64.zip"}
-    'fmtconv.zip' = 'https://github.com/EleonoreMizo/fmtconv/releases/download/r30/fmtconv-r30.zip'
-    #'vsfbd.dll' = @{Repo = "couleurm/vs-frameblender";                                  Pattern = "vs-frameblender-*.dll"}
+    'fmtc.zip'   = @{ Repo = 'EleonoreMizo/fmtconv'; Pattern = 'fmtconv-r*.zip'}
+    'timecube.7z' = "https://github.com/sekrit-twc/timecube/releases/download/$timecube_release/timecube_$timecube_release.7z"
+   #'vsfbd.dll' = @{Repo = "couleurm/vs-frameblender";                                  Pattern = "vs-frameblender-*.dll"}
 }
 
 $ErrorActionPreference = 'Stop'
@@ -179,8 +182,10 @@ Write-Warning "VS Plugins"
 Push-Location $VS/vapoursynth64/plugins
 
 7z e -y $svp -r svpflow1_vs.dll svpflow2_vs.dll . | Out-Null
-7z e -y $fmtconv -r 'win64\fmtconv.dll' . | Out-Null
+7z e -y $fmtc -r 'win64\fmtconv.dll' . | Out-Null
+7z e -y $timecube -r "timecube_$timecube_release\x64\vscube.dll" . | Out-Null
 
+Copy-Item $librife .
 $akexpr, $lsmash, $mvtools, $rife, $remap | ForEach-Object { 7z x $_ }
 
 Pop-Location
@@ -192,7 +197,6 @@ if (!$DontZip){
 }
 
 if ($Strip){
-    Wait-Debugger
     Remove-Item (Get-ChildItem $VS/*.pyd | Where-Object {$_.Name -ne $whitelisted_pyd}) -Verbose
 
 

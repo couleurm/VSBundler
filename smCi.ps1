@@ -39,6 +39,7 @@ $Dependencies = [Ordered]@{
     'timecube.7z' = "https://github.com/sekrit-twc/timecube/releases/download/$timecube_release/timecube_$timecube_release.7z"
     'ffms2.7z' = "https://github.com/FFMS/ffms2/releases/download/$ffms2_release/ffms2-$ffms2_release-msvc.7z"
    #'vsfbd.dll' = @{Repo = "couleurm/vs-frameblender";                                  Pattern = "vs-frameblender-*.dll"}
+     'avisource.7z' = "https://github.com/vapoursynth/vs-avisource-obsolete/releases/download/R1/avisource-r1.7z"
 }
 
 $ErrorActionPreference = 'Stop'
@@ -184,6 +185,7 @@ Write-Warning "VS Plugins"
 
 Push-Location $VS/vapoursynth64/plugins
 
+7z e -y $avisource -r "win64\avisource.dll" . | Out-Null
 7z e -y $ffms2 -r "ffms2-$ffms2_release-msvc\x64\ffms2.dll" . | Out-Null
 7z e -y $svp -r svpflow1_vs.dll svpflow2_vs.dll . | Out-Null
 7z e -y $fmtc -r 'win64\fmtconv.dll' . | Out-Null

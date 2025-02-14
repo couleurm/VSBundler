@@ -6,6 +6,7 @@ param(
     [Switch]$DontZip, # skips zipping, for debugging
     [Switch]$EnsureVSScript # Executes vspipe.exe after each component is stripped/compressed and fails if $LASTEXITCODE
 )
+
 if ($UPXBrute -and $UPX){
     return "Can't pass both -UPXBrute and -UPX"
 }

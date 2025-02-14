@@ -20,7 +20,7 @@ if (-not(Get-Command Get -ErrorAction Ignore)){
     }
 }
 $timecube_release = "r3.1"
-$ffms2_release = "2.40"
+$ffms2_release = "5.0"
 $whitelisted_pyd = 'vapoursynth.cp310-win_amd64.pyd'
 
 $Dependencies = [Ordered]@{
@@ -29,6 +29,7 @@ $Dependencies = [Ordered]@{
     'svp.7z'     = 'https://github.com/bjaan/smoothvideo/blob/main/SVPflow_LastGoodVersions.7z?raw=true'
     'akexpr.7z'  = "https://github.com/AkarinVS/vapoursynth-plugin/releases/download/v0.96/akarin-release-lexpr-amd64-v0.96b.7z"
    #'akexpr.zip' = @{ Repo = "AkarinVS/vapoursynth-plugin";                             Pattern = "akarin-release-lexpr-amd64-v*.7z"}
+    'bestsource.7z'= "https://github.com/vapoursynth/bestsource/releases/download/R10/BestSource-R10.7z"
     'lsmash.zip' = "https://github.com/AkarinVS/L-SMASH-Works/releases/download/vA.3k/release-x86_64-cachedir-tmp.zip"
     'mvtools.7z' = @{ Repo = "dubhater/vapoursynth-mvtools";                            Pattern = "vapoursynth-mvtools-v*-win64.7z"}
     'remap.zip'  = @{ Repo = "Irrational-Encoding-Wizardry/Vapoursynth-RemapFrames";    Pattern = "Vapoursynth-RemapFrames-v*-x64.zip"}
@@ -185,6 +186,7 @@ Write-Warning "VS Plugins"
 
 Push-Location $VS/vapoursynth64/plugins
 
+7z e -y $bestsource "bestsource.dll" . | Out-Null
 7z e -y $avisource -r "win64\avisource.dll" . | Out-Null
 7z e -y $ffms2 -r "ffms2-$ffms2_release-msvc\x64\ffms2.dll" . | Out-Null
 7z e -y $svp -r svpflow1_vs.dll svpflow2_vs.dll . | Out-Null

@@ -212,11 +212,7 @@ if ($Strip){
     Write-Warning "Stripping"
     @(
         "pythonw.exe"
-        "AVFS.exe"
-        "VSVFW.dll"
-        "vsrepo.py"
         "VapourSynth_portable.egg-info"
-        "/sdk/"
 
         "/DLLs/sqlite3.dll" # databases yeah i aint using that?
         "/DLLs/libssl-1_1.dll"
